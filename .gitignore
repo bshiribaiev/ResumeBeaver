@@ -1,4 +1,34 @@
-.env
+# Python
 __pycache__/
-*.pyc
-*.DS_Store
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual Environments
+venv/
+.env
+.env.*
+
+# Jupyter & Python notebooks
+.ipynb_checkpoints/
+
+# Streamlit cache
+.streamlit/
+
+# Uploaded/Generated Files
+*.pdf
+*.docx
+*.doc
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Deployment configs (optional)
+*.db
+*.sqlite3
