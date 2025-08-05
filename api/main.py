@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from api.routers import upload, analyze  # ← Updated this line
+from api.routers import upload, analyze, optimize  # ← Added optimize
 
 # Create FastAPI app
 app = FastAPI(
@@ -34,6 +34,7 @@ async def test_imports():
         import spacy
         import pandas
         import numpy
+        import sklearn  # ← Added sklearn test
         nlp = spacy.load('en_core_web_sm')
         
         return {
@@ -42,6 +43,7 @@ async def test_imports():
                 "spacy": "✅",
                 "pandas": "✅", 
                 "numpy": "✅",
+                "sklearn": "✅",  # ← Added sklearn check
                 "spacy_model": "✅"
             },
             "message": "All imports working correctly!"
@@ -51,7 +53,8 @@ async def test_imports():
 
 # Include routers
 app.include_router(upload.router, prefix="/api/v1", tags=["upload"])
-app.include_router(analyze.router, prefix="/api/v1", tags=["analyze"])  # ← Added this line
+app.include_router(analyze.router, prefix="/api/v1", tags=["analyze"])
+app.include_router(optimize.router, prefix="/api/v1", tags=["optimize"])  # ← Added optimize router
 
 if __name__ == "__main__":
     uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
