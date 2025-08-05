@@ -42,3 +42,4 @@ flake8>=6.0.0
 # Environment & Configuration
 python-dotenv>=1.0.0
 pydantic>=2.0.0
+
