@@ -7,6 +7,9 @@ from datetime import datetime
 import PyPDF2
 from docx import Document
 
+# ADD this import for Diana's enhanced tools
+from tools.api_integration import enhanced_upload_processing
+
 router = APIRouter()
 
 # Configure upload settings
@@ -40,6 +43,7 @@ def extract_text_from_docx(file_path: str) -> str:
     except Exception as e:
         raise Exception(f"Error reading DOCX: {str(e)}")
 
+# ORIGINAL UPLOAD ENDPOINT (Arsenii's existing code)
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
     """Upload and process a resume file (PDF or DOCX)"""
@@ -92,6 +96,57 @@ async def upload_resume(file: UploadFile = File(...)):
             os.remove(upload_path)
         raise HTTPException(status_code=500, detail=f"File processing error: {str(e)}")
 
+# NEW ENHANCED UPLOAD ENDPOINT (Diana's integration)
+@router.post("/upload-resume-enhanced")
+async def upload_resume_enhanced(file: UploadFile = File(...)):
+    """Enhanced upload and processing using Diana's comprehensive analysis"""
+    
+    # Validate file type
+    if not any(file.filename.lower().endswith(ext) for ext in ALLOWED_EXTENSIONS):
+        raise HTTPException(
+            status_code=400, 
+            detail=f"File type not supported. Allowed: {ALLOWED_EXTENSIONS}"
+        )
+    
+    # Validate file size
+    if file.size and file.size > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"File too large. Max size: {MAX_FILE_SIZE / (1024*1024):.1f}MB"
+        )
+    
+    try:
+        # Save uploaded file
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_filename = f"{timestamp}_{file.filename}"
+        upload_path = os.path.join(UPLOAD_DIR, safe_filename)
+        
+        with open(upload_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Use Diana's enhanced processing instead of basic extraction
+        result = enhanced_upload_processing(upload_path, file.filename)
+        
+        if result.get('success'):
+            return {
+                "message": "Resume processed with enhanced analysis",
+                "filename": file.filename,
+                "saved_as": safe_filename,
+                "size": file.size,
+                **result  # Diana's rich structured data
+            }
+        else:
+            # Clean up file if processing failed
+            if os.path.exists(upload_path):
+                os.remove(upload_path)
+            raise HTTPException(status_code=500, detail=result.get('error', 'Enhanced processing failed'))
+            
+    except Exception as e:
+        # Clean up file if processing failed
+        if 'upload_path' in locals() and os.path.exists(upload_path):
+            os.remove(upload_path)
+        raise HTTPException(status_code=500, detail=f"Enhanced processing error: {str(e)}")
+
 @router.get("/files")
 async def list_uploaded_files():
     """List all uploaded resume files"""
@@ -114,11 +169,18 @@ async def list_uploaded_files():
 async def test_upload_endpoint():
     """Test endpoint to verify upload router is working"""
     return {
-        "message": "Upload router is working!",
+        "message": "Upload router is working with enhanced capabilities!",
         "endpoints": [
-            "POST /upload-resume - Upload resume file",
+            "POST /upload-resume - Basic resume file upload and processing",
+            "POST /upload-resume-enhanced - Enhanced upload with Diana's comprehensive analysis",
             "GET /files - List uploaded files"
         ],
         "supported_formats": ALLOWED_EXTENSIONS,
-        "max_file_size": f"{MAX_FILE_SIZE / (1024*1024):.1f}MB"
+        "max_file_size": f"{MAX_FILE_SIZE / (1024*1024):.1f}MB",
+        "enhanced_features": [
+            "Contact information extraction",
+            "Skills categorization",
+            "Experience analysis",
+            "Comprehensive resume parsing"
+        ]
     }
