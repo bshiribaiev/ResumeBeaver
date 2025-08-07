@@ -1,10 +1,10 @@
-# api/routers/analyze.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import spacy
 import re
 from collections import Counter
+from tools.api_integration import enhanced_resume_analysis, enhanced_job_analysis  # ← ADD THIS LINE
 
 router = APIRouter()
 
@@ -221,6 +221,29 @@ async def analyze_resume_text(resume: ResumeText):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Resume analysis error: {str(e)}")
 
+# ← ADD DIANA'S ENHANCED ENDPOINTS BELOW
+@router.post("/analyze-resume-enhanced")
+async def analyze_resume_enhanced(resume: ResumeText):
+    """Enhanced resume analysis using Diana's advanced processing"""
+    try:
+        result = enhanced_resume_analysis(resume.content)
+        if result["success"]:
+            return result
+        raise HTTPException(status_code=500, detail=result["error"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Enhanced analysis error: {str(e)}")
+
+@router.post("/analyze-job-enhanced") 
+async def analyze_job_enhanced(job: JobDescription):
+    """Enhanced job analysis using Diana's advanced processing"""
+    try:
+        result = enhanced_job_analysis(job.content, job.company_name, job.job_title)
+        if result["success"]:
+            return result
+        raise HTTPException(status_code=500, detail=result["error"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Enhanced job analysis error: {str(e)}")
+
 @router.get("/test-analyze")
 async def test_analyze_endpoint():
     """Test endpoint to verify analyze router is working"""
@@ -228,12 +251,16 @@ async def test_analyze_endpoint():
         "message": "Analyze router is working!",
         "endpoints": [
             "POST /analyze-job - Analyze job description",
-            "POST /analyze-resume - Analyze resume text"
+            "POST /analyze-resume - Analyze resume text",
+            "POST /analyze-resume-enhanced - Enhanced resume analysis",
+            "POST /analyze-job-enhanced - Enhanced job analysis"
         ],
         "features": [
             "Skill extraction",
             "Requirement analysis", 
             "Keyword extraction",
-            "Experience level detection"
+            "Experience level detection",
+            "Enhanced processing with Diana's algorithms"
         ]
     }
+

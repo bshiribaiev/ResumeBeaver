@@ -1,4 +1,3 @@
-# api/routers/optimize.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Optional
@@ -8,6 +7,10 @@ import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from tools.api_integration import (  # ← ADD THIS IMPORT
+    enhanced_resume_optimization,
+    enhanced_match_score_calculation
+)
 
 router = APIRouter()
 
@@ -334,6 +337,29 @@ async def get_keyword_suggestions(request: OptimizationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Keyword suggestion error: {str(e)}")
 
+# ← ADD DIANA'S ENHANCED ENDPOINTS BELOW
+@router.post("/optimize-enhanced")
+async def optimize_enhanced(request: OptimizationRequest):
+    """Enhanced optimization using Diana's advanced algorithms"""
+    try:
+        result = enhanced_resume_optimization(request.resume_content, request.job_description)
+        if result["success"]:
+            return result
+        raise HTTPException(status_code=500, detail=result["error"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Enhanced optimization error: {str(e)}")
+
+@router.post("/enhanced-match-score")
+async def enhanced_match_score(request: OptimizationRequest):
+    """Enhanced match scoring using Diana's advanced calculations"""
+    try:
+        result = enhanced_match_score_calculation(request.resume_content, request.job_description)
+        if result["success"]:
+            return result
+        raise HTTPException(status_code=500, detail=result["error"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Enhanced match score error: {str(e)}")
+
 @router.get("/test-optimize")
 async def test_optimization_endpoint():
     """Test endpoint to verify optimization router is working"""
@@ -342,13 +368,16 @@ async def test_optimization_endpoint():
         "endpoints": [
             "POST /optimize-resume - Complete resume optimization",
             "POST /calculate-match-score - Job match scoring",
-            "POST /suggest-keywords - ATS keyword suggestions"
+            "POST /suggest-keywords - ATS keyword suggestions",
+            "POST /optimize-enhanced - Enhanced optimization with Diana's algorithms",
+            "POST /enhanced-match-score - Enhanced match scoring"
         ],
         "features": [
             "Resume-job matching analysis",
             "Missing skill identification",
             "ATS optimization scoring",
             "Improvement recommendations",
-            "Keyword suggestion engine"
+            "Keyword suggestion engine",
+            "Enhanced processing with Diana's advanced algorithms"
         ]
     }
