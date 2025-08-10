@@ -3,7 +3,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from api.routers import upload, analyze, optimize, watson  # ← Added watson
-
+ 
+#  
 # Create FastAPI app
 app = FastAPI(
     title="Resume Builder API",
