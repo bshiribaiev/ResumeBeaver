@@ -1,3 +1,6 @@
+# After installing all of the below, run:
+# python -m spacy download en_core_web_sm
+
 # IBM Watson & AI Platform
 ibm-watson>=6.0.0
 ibm-cloud-sdk-core>=3.16.0
