@@ -1,8 +1,4 @@
-# api/routers/watson.py
-"""
-IBM Watson-powered endpoints for ResumeBeaver
-"""
-
+# IBM Watson-powered endpoints for ResumeBeaver
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional

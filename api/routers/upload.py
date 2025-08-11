@@ -1,4 +1,3 @@
-# api/routers/upload.py
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import os
@@ -7,7 +6,6 @@ from datetime import datetime
 import PyPDF2
 from docx import Document
 
-# ADD this import for Diana's enhanced tools
 from tools.api_integration import enhanced_upload_processing
 
 router = APIRouter()

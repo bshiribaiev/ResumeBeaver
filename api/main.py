@@ -1,10 +1,10 @@
-# api/main.py
+import uvicorn
+import spacy
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from api.routers import upload, analyze, optimize, watson  # ← Added watson
+from .routers import upload, analyze, optimize, watson  
+from ibm.watson_client import get_watson_client
  
-#  
 # Create FastAPI app
 app = FastAPI(
     title="Resume Builder API",
@@ -33,15 +33,8 @@ async def health_check():
 @app.get("/test-imports")
 async def test_imports():
     try:
-        import spacy
-        import pandas
-        import numpy
-        import sklearn
-        import requests  # ← Added for Watson
-        from ibm.watson_client import get_watson_client  # ← Added Watson test
         nlp = spacy.load('en_core_web_sm')
         
-        # Test Watson client
         watson_client = get_watson_client()
         
         return {
