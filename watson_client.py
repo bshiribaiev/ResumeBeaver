@@ -1,16 +1,9 @@
-# ibm/watson_client.py
-"""
-IBM watsonx.ai integration for ResumeBeaver
-"""
 import os
 import logging
 from typing import Dict, Optional
 import requests
-import json
 
-class WatsonXClient:
-    """Client for IBM watsonx.ai integration"""
-    
+class WatsonXClient:    
     def __init__(self, api_key: str = None, url: str = None):
         """
         Initialize Watson client with credentials
@@ -29,7 +22,6 @@ class WatsonXClient:
             self.watson_available = True
     
     def get_access_token(self) -> Optional[str]:
-        """Get IBM Cloud access token"""
         if not self.watson_available:
             return None
             
@@ -132,7 +124,6 @@ class WatsonXClient:
             return self._fallback_optimization(resume_text, job_description)
     
     def _fallback_optimization(self, resume_text: str, job_description: str) -> Dict:
-        """Fallback optimization when Watson is unavailable"""
         return {
             "success": True,
             "watson_optimizations": "Watson AI unavailable - using enhanced local analysis. Key suggestions: 1) Add relevant keywords from job description, 2) Quantify achievements with metrics, 3) Use standard section headers for ATS, 4) Highlight matching skills prominently, 5) Tailor experience descriptions to job requirements.",
@@ -144,5 +135,4 @@ class WatsonXClient:
 watson_client = WatsonXClient()
 
 def get_watson_client() -> WatsonXClient:
-    """Get the global Watson client instance"""
     return watson_client
