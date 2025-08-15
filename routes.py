@@ -22,12 +22,15 @@ analyzer = ResumeAnalyzer(use_watson=True)
 class AnalyzeRequest(BaseModel):
     content: str
     type: str = "resume"  # "resume" or "job"
+
 class OptimizeRequest(BaseModel):
     resume: str
     job_description: str
+
 class MatchRequest(BaseModel):
     resume: str
     job_description: str
+
 class GenerateResumeRequest(BaseModel):
     resume: str
     job_description: str
@@ -161,7 +164,7 @@ def extract_contact_from_text(text: str) -> dict:
     return contact
 
 def apply_optimizations_to_text(original_resume: str, optimization_result: dict) -> str:
-    """Apply optimization suggestions to create improved resume text - IMPROVED VERSION"""
+    """Apply optimization suggestions to create improved resume text"""
     
     # Start with original resume
     optimized_text = original_resume
@@ -449,7 +452,7 @@ async def optimize_resume(request: OptimizeRequest):
     except Exception as e:
         raise HTTPException(500, f"Optimization failed: {str(e)}")
 
-# NEW: Generate optimized resume
+# Generate optimized resume
 @router.post("/generate")
 async def generate_optimized_resume(request: GenerateResumeRequest):
     try:
@@ -482,7 +485,7 @@ async def generate_optimized_resume(request: GenerateResumeRequest):
     except Exception as e:
         raise HTTPException(500, f"Resume generation failed: {str(e)}")
 
-# NEW: Preview optimized resume
+# Preview optimized resume
 @router.post("/preview")
 async def preview_optimized_resume(request: OptimizeRequest):
     try:
@@ -514,12 +517,19 @@ async def preview_optimized_resume(request: OptimizeRequest):
 @router.get("/status")
 async def get_status():
     watson_available = False
+    model = "fallback_mode"
+    
     try:
         from watson_client import get_watson_client
         client = get_watson_client()
         watson_available = client.watson_available
-    except:
-        pass
+        
+        # FIXED: Get actual model from environment variables
+        if watson_available:
+            model = os.getenv("IBM_MODEL_ID", "ibm/granite-13b-instruct-v2")
+    except Exception as e:
+        print(f"Watson client error: {e}")
+    
     return {
         "status": "operational",
         "version": "2.0.0",
@@ -529,20 +539,21 @@ async def get_status():
             "job_analysis": True,
             "match_scoring": True,
             "optimization": True,
-            "resume_generation": True,  # NEW
+            "resume_generation": True,
             "ai_powered": watson_available
         },
         "ai_status": {
             "watson_available": watson_available,
-            "model": "meta-llama/llama-3-1-70b-instruct" if watson_available else None
+            "model": model,  # Now shows correct model: ibm/granite-13b-instruct-v2
+            "model_provider": "IBM Watson" if watson_available else "Local fallback"
         },
         "endpoints": [
             "POST /upload - Upload and process resume file",
             "POST /analyze - Analyze resume or job content",
             "POST /match - Calculate resume-job match score",
             "POST /optimize - Generate optimization suggestions",
-            "POST /generate - Generate optimized resume file",  # NEW
-            "POST /preview - Preview optimized resume",  # NEW
+            "POST /generate - Generate optimized resume file",
+            "POST /preview - Preview optimized resume",
             "GET /status - System status and capabilities"
         ]
     }
