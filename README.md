@@ -87,6 +87,12 @@ ResumeBeaver/
 - **API Documentation**: Interactive Swagger UI with all endpoints
 - **Test Suite**: Comprehensive integration tests included
 
+## 🎥 Demo (YouTube)
+[![Watch the demo](https://img.youtube.com/vi/tzKy18JaR_4/maxresdefault.jpg)](https://youtu.be/tzKy18JaR_4)
+
+*Quick Link:* https://www.youtube.com/watch?v=tzKy18JaR_4
+
+
 ### Key Demo Features
 1. **File Upload & Analysis**: Upload PDF/DOCX/TXT files for comprehensive parsing and analysis
 2. **AI-Powered Job Matching**: Watson-enhanced semantic matching between resumes and job descriptions  
