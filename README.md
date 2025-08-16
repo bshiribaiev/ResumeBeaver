@@ -105,8 +105,8 @@ ResumeBeaver/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/bshiribaiev/resume-builder.git
-   cd resume-builder
+   git clone https://github.com/bshiribaiev/ResumeBeaver.git
+   cd ResumeBeaver
    ```
 
    > Note: Repository will be renamed to ResumeBeaver soon!
